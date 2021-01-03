@@ -5,23 +5,19 @@ const multiplesChoiceOne = 3;
 const multiplesChoiceTwo = 5;
 const numberCap = 1000;
 
-var multiplesArray = [];
+var matchingNumbersArray = [];
 var sumTotal = 0;
 
 // multiples check
-for (i = 0; i < numberCap; i++) {
-  if (i % multiplesChoiceOne === 0) {
-    multiplesArray.push(i);
-  }
-  if (i % multiplesChoiceTwo === 0) {
-    multiplesArray.push(i);
+for (num = 0; num < numberCap; num++) {
+  if ((num % multiplesChoiceOne === 0) || (num % multiplesChoiceTwo === 0)) {
+    matchingNumbersArray.push(num);
   }
 }
 
-// uniqify array (in case of numbers that fit all the multiples)
-var uniqueItems = [...new Set(multiplesArray)];
-uniqueItems.forEach(function(number) {
-  sumTotal = sumTotal + number
+// sum all the matching numbers
+matchingNumbersArray.forEach(function(number) {
+  sumTotal = sumTotal + number;
 });
 
 console.log('Answer:', sumTotal);
