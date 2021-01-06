@@ -4,17 +4,17 @@ console.log('Running solution for Problem 0004...');
 const digitsLength = 3;  // test with 2 first
 
 // start at maximum values for products
-var startNum = parseInt("9".repeat(digitsLength));
-var floorNum = parseInt("9".repeat(digitsLength - 1));  // no point in calculating beyond this limit
-var productSourceOne = startNum;
-var productSourceTwo = startNum;
+const startNum = parseInt("9".repeat(digitsLength));
+const floorNum = parseInt("9".repeat(digitsLength - 1));  // no point in calculating beyond this limit
+const productSourceOne = startNum;
+const productSourceTwo = startNum;
 
 var productVals = new Map();
 // build map of all products and their contributing values
 for (numOne = productSourceOne; numOne > floorNum; numOne--) {
   for (numTwo = productSourceTwo; numTwo > floorNum; numTwo--) {
-    var product = numOne * numTwo;
-    var reversedProduct = String(product).split("").reverse().join("");
+    const product = numOne * numTwo;
+    const reversedProduct = String(product).split("").reverse().join("");
     if (String(product) === reversedProduct) {
       // palindrome detected!
       productVals.set(product, `${numOne} x ${numTwo}`);
