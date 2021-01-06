@@ -4,9 +4,8 @@ console.log('Running solution for Problem 0004...');
 const digitsLength = 3;  // test with 2 first
 
 // start at maximum values for products
-var startNum = 9;
-startNum = "9".repeat(digitsLength - String(startNum).length) + startNum;
-var floorNum = "9".repeat(digitsLength - 1);  // no point in calculating beyond this limit
+var startNum = parseInt("9".repeat(digitsLength));
+var floorNum = parseInt("9".repeat(digitsLength - 1));  // no point in calculating beyond this limit
 var productSourceOne = startNum;
 var productSourceTwo = startNum;
 
