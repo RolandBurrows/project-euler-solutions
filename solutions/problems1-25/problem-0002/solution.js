@@ -34,3 +34,5 @@ fibonacciValuesEven.forEach(function(value) {
 });
 
 console.log('Answer:', sumTotal);
+
+// Answer: 4613732
