@@ -1,7 +1,7 @@
 console.log('Running solution for Problem 0005...');
 
 // challenge settings
-const divisibleRange = 10;  // test with 10 first
+const divisibleRange = 20;  // test with 10 first
 
 /*
   turns out the brute-force method will take hours and hours
@@ -22,7 +22,7 @@ const divisibleRange = 10;  // test with 10 first
 //   } else {
 //     counter = 0;
 //   }
-//   value++
+//   value++;
 // }
 
 /*
