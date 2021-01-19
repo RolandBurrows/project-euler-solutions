@@ -47,19 +47,20 @@ for (var num = 1; num <= countCap; num++) {
   for (var place = 0; place < numLength; place++) {
     var placeValue = '';
     var placeWordLength = 0;
+    var totalPlaceValue = '';
     // thousands place!
     if (numLength - place === 4) {
       placeValue = numString.charAt(numLength-4);
       ultraCount += lexMap[placeValue];  // e.g. 'one'
       ultraCount += lexMap['1000'];  // 'thousand'
-      var totalPlaceValue = '';
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-4));
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-3));
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-2));
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-1));
-      var totalValNum = Number(totalPlaceValue);
+      totalPlaceValue = ''.concat(
+        numString.charAt(numLength-4),
+        numString.charAt(numLength-3),
+        numString.charAt(numLength-2),
+        numString.charAt(numLength-1)
+      );
       // break for the values ending in all zeroes
-      if (totalValNum % 1000 === 0) {
+      if (num % 1000 === 0) {
         break;  // e.g. 20
       }
     }
@@ -68,13 +69,13 @@ for (var num = 1; num <= countCap; num++) {
       placeValue = numString.charAt(numLength-3);
       ultraCount += lexMap[placeValue];
       ultraCount += lexMap['100'];
-      var totalPlaceValue = '';
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-3));
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-2));
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-1));
-      var totalValNum = Number(totalPlaceValue);
+      totalPlaceValue = ''.concat(
+        numString.charAt(numLength-3),
+        numString.charAt(numLength-2),
+        numString.charAt(numLength-1)
+      );
       // break for the values ending in all zeroes
-      if (totalValNum % 100 === 0) {
+      if (num % 100 === 0) {
         break;  // e.g. 20
       }
       ultraCount += 3;  // 'and'
@@ -82,10 +83,10 @@ for (var num = 1; num <= countCap; num++) {
     // tens place!
     if (numLength - place === 2) {
       placeValue = numString.charAt(numLength-2);
-      var totalPlaceValue = '';
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-2));
-      totalPlaceValue = totalPlaceValue.concat(numString.charAt(numLength-1));
-      var totalValNum = Number(totalPlaceValue);
+      totalPlaceValue = ''.concat(
+        numString.charAt(numLength-2),
+        numString.charAt(numLength-1)
+      );
       // test for one of the unique-worded place values 10-19
       if (placeValue === '1') {
         ultraCount += lexMap[totalPlaceValue];  // e.g. 11
@@ -96,7 +97,7 @@ for (var num = 1; num <= countCap; num++) {
         totalPlaceValue = totalPlaceValue.concat('0');
         ultraCount += lexMap[totalPlaceValue];
         // break for the values ending in zero ('twenty', not 'twenty zero')
-        if (totalValNum % 10 === 0) {
+        if (num % 10 === 0) {
           break;  // e.g. 20
         }
       }
@@ -106,7 +107,6 @@ for (var num = 1; num <= countCap; num++) {
       placeValue = numString.charAt(numLength-1);
       placeWordLength = lexMap[placeValue];
       ultraCount += placeWordLength;
-      //console.log(`${num}: ones == ${placeWordLength}`);
     }    
   }
 }
