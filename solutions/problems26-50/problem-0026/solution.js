@@ -27,7 +27,7 @@ function getRepetendLength(divisor) {
 // see problem 0007
 function generatePrimes() {
   // algorithm requires co-prime to 10, so start with prime 7
-  // further researhc: full reptend primes
+  // further research: full repetend primes
   var number = 6;
   while (true) {
     number++;
