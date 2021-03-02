@@ -7,7 +7,7 @@ const cardValueObj = {
   'K': 12,
   'Q': 11,
   'J': 10,
-  '10': 9,
+  'T': 9,
   '9': 8,
   '8': 7,
   '7': 6,
@@ -30,6 +30,26 @@ const handRankObj = {
   'highCard': 1
 };
 
+// function nextHighCard(handString) {
+//   var handStrCopy = handString;
+//   var cards = handStrCopy.match(/.{1,2}/g);
+//   var sortedCards = cards.slice().sort((a, b) => cardValueObj[b.charAt(0)] - cardValueObj[a.charAt(0)]);
+//   var highCard = sortedCards[0];
+//   sortedCards.shift();
+//   var remainder = sortedCards.join('');
+//   return [highCard, remainder];
+// }
+// console.assert(nextHighCard('2C5C7D8S').toString() === '8S,7D5C2C', 'nextHighCard');
+
+// function returnRemainingCards(handString, winningHand) {
+//   var handStrCopy = handString;
+//   var cards = winningHand.match(/.{1,2}/g);
+//   cards.forEach( function(card) {
+//     handStrCopy = handStrCopy.replace(card, '');
+//   });
+//   return handStrCopy;
+// }
+// console.assert(returnRemainingCards('KSJD5DJHKC', 'KSKCJDJH') === '5D', 'returnRemainingCards');
 
 function whatIsTheHighCard(handString) {
   if (handString === '') { return ''; }
@@ -54,6 +74,7 @@ function whatHandDoIHave(handString) {
   /*
     return ['rankedHandType', 'matchingPartOfHand', 'remainderOfHand']
   */
+  const highCard = whatIsTheHighCard(handString);
   // RANKS
   var onePair = false;
   var twoPairs = false;
@@ -124,46 +145,46 @@ function whatHandDoIHave(handString) {
   }
   // PARSING
   if (royalStraight && flush) {
-    return 'royalFlush';
+    return ['royalFlush', highCard];
   }
   if (straight && flush) {
-    return 'straightFlush';
+    return ['straightFlush', highCard];
   }
   if (fourOfKind) {
-    return 'fourOfKind';
+    return ['fourOfKind', highCard];
   }
   if (fullHouse) {
-    return 'fullHouse';
+    return ['fullHouse', highCard];
   }
   if (flush) {
-    return 'flush';
+    return ['flush', highCard];
   }
   if (straight) {
-    return 'straight';
+    return ['straight', highCard];
   }
   if (threeOfKind) {
-    return 'threeOfKind';
+    return ['threeOfKind', highCard];
   }
   if (twoPairs) {
-    return 'twoPairs';
+    return ['twoPairs', highCard];
   }
   if (onePair) {
-    return 'onePair';
+    return ['onePair', highCard];
   }
-  return `highcard-${whatIsTheHighCard(handString)}`;
+  return ['highcard', highCard];
   throw "unparsable poker hand!"  // this should never happen
 }
-console.assert(whatHandDoIHave('TSJSQSKSAS') === 'royalFlush', 'hand: royalFlush');
-console.assert(whatHandDoIHave('2S3S4S5S6S') === 'straightFlush', 'hand: straightFlush');
-console.assert(whatHandDoIHave('JCJHJDJS2C') === 'fourOfKind', 'hand: fourOfKind');
-console.assert(whatHandDoIHave('2H2D4C4D4S') === 'fullHouse', 'hand: fullHouse');
-console.assert(whatHandDoIHave('3C3D3S9S9D') === 'fullHouse', 'hand: fullHouse');
-console.assert(whatHandDoIHave('2H4H6H8HTH') === 'flush', 'hand: flush');
-console.assert(whatHandDoIHave('5C6S7H8D9C') === 'straight', 'hand: straight');
-console.assert(whatHandDoIHave('3C5HQHQSQD') === 'threeOfKind', 'hand: threeOfKind');
-console.assert(whatHandDoIHave('KSJD5DJHKC') === 'twoPairs', 'hand: twoPairs');
-console.assert(whatHandDoIHave('AS3H5C8HAC') === 'onePair', 'hand: onePair');
-console.assert(whatHandDoIHave('2C5C7D8SQH') === 'highcard-QH', 'hand: highCard');
+console.assert(whatHandDoIHave('TSJSQSKSAS').toString() === 'royalFlush,AS', 'hand: royalFlush');
+console.assert(whatHandDoIHave('2S3S4S5S6S').toString() === 'straightFlush,6S', 'hand: straightFlush');
+console.assert(whatHandDoIHave('JCJHJDJS2C').toString() === 'fourOfKind,JC', 'hand: fourOfKind');
+console.assert(whatHandDoIHave('2H2D4C4D4S').toString() === 'fullHouse,4C', 'hand: fullHouse');
+console.assert(whatHandDoIHave('3C3D3S9S9D').toString() === 'fullHouse,9S', 'hand: fullHouse');
+console.assert(whatHandDoIHave('2H4H6H8HTH').toString() === 'flush,TH', 'hand: flush');
+console.assert(whatHandDoIHave('5C6S7H8D9C').toString() === 'straight,9C', 'hand: straight');
+console.assert(whatHandDoIHave('3C5HQHQSQD').toString() === 'threeOfKind,QH', 'hand: threeOfKind');
+console.assert(whatHandDoIHave('KSJD5DJHKC').toString() === 'twoPairs,KS', 'hand: twoPairs');
+console.assert(whatHandDoIHave('AS3H5C8HAC').toString() === 'onePair,AS', 'hand: onePair');
+console.assert(whatHandDoIHave('2C5C7D8SQH').toString() === 'highcard,QH', 'hand: highCard');
 
 
 // extract poker hands data
@@ -190,7 +211,7 @@ console.assert(pokerHands.length === 1000, 'number of hands');
 // ]
 
 pokerHands.forEach( function(handSet) {
-  console.log(`${whatHandDoIHave(handSet[0])}  vs.  ${whatHandDoIHave(handSet[1])}`);
+  //console.log(`${whatHandDoIHave(handSet[0])}  vs.  ${whatHandDoIHave(handSet[1])}`);
 });
 
 
