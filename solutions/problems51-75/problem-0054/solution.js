@@ -71,10 +71,7 @@ function whatIsTheHighCard(handString) {
 console.assert(whatIsTheHighCard('2C5C7D8SQH') === 'QH', 'whatIsTheHighCard');
 
 function whatHandDoIHave(handString) {
-  /*
-    return ['rankedHandType', 'matchingPartOfHand', 'remainderOfHand']
-  */
-  const highCard = whatIsTheHighCard(handString);
+  var highCard = whatIsTheHighCard(handString);
   // RANKS
   var onePair = false;
   var twoPairs = false;
@@ -106,8 +103,6 @@ function whatHandDoIHave(handString) {
   const spade = (handString.match(/S/g)||[]).length;
   const suitCounts = [club,diamond,heart,spade];
   // LOGIC
-  //console.log(valueCounts);
-  //console.log(suitCounts);
   if (ace === 1 && king === 1 && queen === 1 && jack === 1 && ten === 1) {
     royalStraight = true;
   }
@@ -166,12 +161,24 @@ function whatHandDoIHave(handString) {
     return ['threeOfKind', highCard];
   }
   if (twoPairs) {
-    return ['twoPairs', highCard];
+    var highVal = '';
+    valueCounts.forEach( function(cardCount, index) {
+      if (cardCount === 2) {
+        highVal = Object.keys(cardValueObj).find(key => cardValueObj[key] === index+1);
+      }
+    });
+    return ['twoPairs', highVal];
   }
   if (onePair) {
-    return ['onePair', highCard];
+    var highVal = '';
+    valueCounts.forEach( function(cardCount, index) {
+      if (cardCount === 2) {
+        highVal = Object.keys(cardValueObj).find(key => cardValueObj[key] === index+1);
+      }
+    });
+    return ['onePair', highVal];
   }
-  return ['highcard', highCard];
+  return ['highCard', highCard];
   throw "unparsable poker hand!"  // this should never happen
 }
 console.assert(whatHandDoIHave('TSJSQSKSAS').toString() === 'royalFlush,AS', 'hand: royalFlush');
@@ -182,11 +189,12 @@ console.assert(whatHandDoIHave('3C3D3S9S9D').toString() === 'fullHouse,9S', 'han
 console.assert(whatHandDoIHave('2H4H6H8HTH').toString() === 'flush,TH', 'hand: flush');
 console.assert(whatHandDoIHave('5C6S7H8D9C').toString() === 'straight,9C', 'hand: straight');
 console.assert(whatHandDoIHave('3C5HQHQSQD').toString() === 'threeOfKind,QH', 'hand: threeOfKind');
-console.assert(whatHandDoIHave('KSJD5DJHKC').toString() === 'twoPairs,KS', 'hand: twoPairs');
-console.assert(whatHandDoIHave('AS3H5C8HAC').toString() === 'onePair,AS', 'hand: onePair');
-console.assert(whatHandDoIHave('2C5C7D8SQH').toString() === 'highcard,QH', 'hand: highCard');
+console.assert(whatHandDoIHave('KSJD5DJHKC').toString() === 'twoPairs,K', 'hand: twoPairs');
+console.assert(whatHandDoIHave('AS3H5C8HAC').toString() === 'onePair,A', 'hand: onePair');
+console.assert(whatHandDoIHave('2C5C7D8SQH').toString() === 'highCard,QH', 'hand: highCard');
 
 
+// BEGIN PROCESSING
 // extract poker hands data
 const rawData = fs.readFileSync('p054_poker.txt', 'utf8');
 const pokerHandData = rawData.split("\n");
@@ -210,10 +218,98 @@ console.assert(pokerHands.length === 1000, 'number of hands');
 //   etc.
 // ]
 
+// initialize metrics
+var playerOneHandCounts = [0,0,0,0,0,0,0,0,0,0];
+var playerOneWinCounts = [0,0,0,0,0,0,0,0,0,0];
+var playerTwoHandCounts = [0,0,0,0,0,0,0,0,0,0];
+var playerTwoWinCounts = [0,0,0,0,0,0,0,0,0,0];
+var playerOneTotalWins = 0;
+var playerTwoTotalWins = 0;
+// play poker!
 pokerHands.forEach( function(handSet) {
-  //console.log(`${whatHandDoIHave(handSet[0])}  vs.  ${whatHandDoIHave(handSet[1])}`);
+  var playerOneWon = false;
+  // METRICS
+  var playerOneHand = whatHandDoIHave(handSet[0]);
+  var pOneHandIndex = handRankObj[playerOneHand[0]]-1;
+  playerOneHandCounts[pOneHandIndex] = playerOneHandCounts[pOneHandIndex] + 1;
+  var playerTwoHand = whatHandDoIHave(handSet[1]);
+  var pTwoHandIndex = handRankObj[playerTwoHand[0]]-1;
+  playerTwoHandCounts[pTwoHandIndex] = playerTwoHandCounts[pTwoHandIndex] + 1;
+  // HAND REVEAL LOGIC
+  if (handRankObj[playerOneHand[0]] > handRankObj[playerTwoHand[0]]) {
+    playerOneWon = true;
+  }
+  if (handRankObj[playerOneHand[0]] === handRankObj[playerTwoHand[0]]) {
+    if (cardValueObj[playerOneHand[1].charAt(0)] > cardValueObj[playerTwoHand[1].charAt(0)]) {
+      playerOneWon = true;
+    }
+  }
+  // WIN LOGGING
+  if (playerOneWon) {
+    playerOneWinCounts[pOneHandIndex] = playerOneWinCounts[pOneHandIndex] + 1;
+    playerOneTotalWins++;
+  } else {
+    playerTwoWinCounts[pTwoHandIndex] = playerTwoWinCounts[pTwoHandIndex] + 1;
+    playerTwoTotalWins++;
+  }
 });
 
 
-console.log('Answer:');
+console.log('');
+console.log('PLAYER ONE METRICS:');
+console.log(`royalFlush - count: ${playerOneHandCounts[9]}, win: ${playerOneWinCounts[9]}`);
+console.log(`straightFlush - count: ${playerOneHandCounts[8]}, win: ${playerOneWinCounts[8]}`);
+console.log(`fourOfKind - count: ${playerOneHandCounts[7]}, win: ${playerOneWinCounts[7]}`);
+console.log(`fullHouse - count: ${playerOneHandCounts[6]}, win: ${playerOneWinCounts[6]}`);
+console.log(`flush - count: ${playerOneHandCounts[5]}, win: ${playerOneWinCounts[5]}`);
+console.log(`straight - count: ${playerOneHandCounts[4]}, win: ${playerOneWinCounts[4]}`);
+console.log(`threeOfKind - count: ${playerOneHandCounts[3]}, win: ${playerOneWinCounts[3]}`);
+console.log(`twoPairs - count: ${playerOneHandCounts[2]}, win: ${playerOneWinCounts[2]}`);
+console.log(`onePair - count: ${playerOneHandCounts[1]}, win: ${playerOneWinCounts[1]}`);
+console.log(`highCard - count: ${playerOneHandCounts[0]}, win: ${playerOneWinCounts[0]}`);
+console.log('');
+console.log('PLAYER TWO METRICS:');
+console.log(`royalFlush - count: ${playerTwoHandCounts[9]}, win: ${playerTwoWinCounts[9]}`);
+console.log(`straightFlush - count: ${playerTwoHandCounts[8]}, win: ${playerTwoWinCounts[8]}`);
+console.log(`fourOfKind - count: ${playerTwoHandCounts[7]}, win: ${playerTwoWinCounts[7]}`);
+console.log(`fullHouse - count: ${playerTwoHandCounts[6]}, win: ${playerTwoWinCounts[6]}`);
+console.log(`flush - count: ${playerTwoHandCounts[5]}, win: ${playerTwoWinCounts[5]}`);
+console.log(`straight - count: ${playerTwoHandCounts[4]}, win: ${playerTwoWinCounts[4]}`);
+console.log(`threeOfKind - count: ${playerTwoHandCounts[3]}, win: ${playerTwoWinCounts[3]}`);
+console.log(`twoPairs - count: ${playerTwoHandCounts[2]}, win: ${playerTwoWinCounts[2]}`);
+console.log(`onePair - count: ${playerTwoHandCounts[1]}, win: ${playerTwoWinCounts[1]}`);
+console.log(`highCard - count: ${playerTwoHandCounts[0]}, win: ${playerTwoWinCounts[0]}`);
+console.log('');
+console.log('How many hands does Player 1 win?');
+console.log('Answer:', playerOneTotalWins);
+console.log('');
 console.timeLog('run time');
+
+// PLAYER ONE METRICS:
+// royalFlush - count: 0, win: 0
+// straightFlush - count: 0, win: 0
+// fourOfKind - count: 0, win: 0
+// fullHouse - count: 0, win: 0
+// flush - count: 1, win: 1
+// straight - count: 4, win: 4
+// threeOfKind - count: 12, win: 11
+// twoPairs - count: 41, win: 40
+// onePair - count: 371, win: 248
+// highCard - count: 571, win: 72
+
+// PLAYER TWO METRICS:
+// royalFlush - count: 0, win: 0
+// straightFlush - count: 0, win: 0
+// fourOfKind - count: 0, win: 0
+// fullHouse - count: 2, win: 2
+// flush - count: 1, win: 1
+// straight - count: 8, win: 8
+// threeOfKind - count: 24, win: 24
+// twoPairs - count: 62, win: 62
+// onePair - count: 474, win: 385
+// highCard - count: 429, win: 142
+
+// How many hands does Player 1 win?
+// Answer: 376
+
+// run time: 23.914ms
